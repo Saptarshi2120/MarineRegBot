@@ -1,66 +1,44 @@
+import os
 import pdfkit
 from jinja2 import Environment, FileSystemLoader
-import os
+from datetime import datetime
 
-# Your data (same as before)
-data = {
-    "submission_id": "trn:oid:::13909:100400776",
-    "submission_date": "Jun 11, 2025, 10:22 PM GMT+5:30",
-    "download_date": "Jun 11, 2025, 10:25 PM GMT+5:30",
-    "file_name": "final year 8th sem project.docx",
-    "file_size": "652.3 KB",
-    "page_count": "62 Pages",
-    "word_count": "9,750 Words",
-    "char_count": "57,452 Characters",
-    "context_similarity": "85%",
-    "citation_file": "final year 8th sem project.docx",
-    "citation_page": "12",
-    "citation_paragraph": "3",
-    "entities": [
-        {"type": "Organization", "value": "OpenAI"},
-        {"type": "Concept", "value": "artificial general intelligence"},
-        {"type": "Quantity", "value": "all of humanity"}
-    ],
-    "sentiment": "Neutral",
-    "tone": "Formal",
-    "summary": "This document provides an overview of OpenAI's mission, its approach to AGI safety, and strategic plans to ensure AI benefits humanity.",
-    "qa_pairs": [
-        {"q": "What is the mission of OpenAI?", "a": "OpenAI’s mission is to ensure that artificial general intelligence benefits all of humanity."},
-        {"q": "How does OpenAI plan to ensure safety?", "a": "OpenAI employs rigorous safety research and policy development to align AGI with human values."}
-    ],
-    "page_number": 1,
-    "total_pages": 3  # Example static page count, can make dynamic later
-}
+# ⛳️ Updated this line: use the correct function name
+from mongo_utils import get_qa_pairs_by_pdf_name  # 🔁 was: get_qa_pairs_by_pdf
 
-# Setup Jinja2 template loader
-env = Environment(loader=FileSystemLoader('.'))
-template = env.get_template('report_template.html')
-html_out = template.render(**data)
+def generate_pdf_report(pdf_name: str, output_path: str):
+    # Fetch Q&A pairs for the given pdf_name
+    qa_pairs = get_qa_pairs_by_pdf_name(pdf_name)
 
-# Save rendered HTML to file for debug/preview
-with open('report_preview.html', 'w', encoding='utf-8') as f:
-    f.write(html_out)
+    # Prepare mock metadata (replace with real values if needed)
+    context = {
+        "submission_id": "SUB12345",
+        "submission_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "download_date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "file_name": pdf_name,
+        "file_size": "456 KB",
+        "page_count": "12",
+        "word_count": "3456",
+        "char_count": "20456",
+        "context_similarity": "82%",
+        "citation_file": pdf_name,
+        "citation_page": 3,
+        "citation_paragraph": 2,
+        "sentiment": "Positive",
+        "tone": "Analytical",
+        "entities": [
+            {"type": "Person", "value": "John Doe"},
+            {"type": "Organization", "value": "OpenAI"},
+        ],
+        "summary": "This PDF provides a deep insight into modern AI techniques...",
+        "qa_pairs": qa_pairs
+    }
 
-# Define wkhtmltopdf configuration
-config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+    # Load the template
+    env = Environment(loader=FileSystemLoader(os.path.dirname(__file__)))
+    template = env.get_template("report_template.html")
+    html_out = template.render(**context)
 
-# PDF options for better control (disable network, load local files, etc.)
-options = {
-    'enable-local-file-access': '',
-    'quiet': '',
-    'disable-external-links': '',
-    'disable-javascript': '',
-    'encoding': 'UTF-8',
-    'margin-top': '10mm',
-    'margin-bottom': '10mm',
-    'margin-left': '15mm',
-    'margin-right': '15mm'
-}
-
-# Generate the PDF
-try:
-    pdfkit.from_file('report_preview.html', 'report_output.pdf', configuration=config, options=options)
-    print("✅ PDF generated successfully: report_output.pdf")
-except OSError as e:
-    print("❌ PDF generation failed!")
-    print(str(e))
+    # Generate PDF
+    pdfkit.from_string(html_out, output_path)
+    print(f"✅ Report generated at: {output_path}")

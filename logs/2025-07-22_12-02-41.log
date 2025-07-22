@@ -1,0 +1,2 @@
+2025-07-22 12:02:41 | INFO | __main__ | Deleted old log: 2025-06-12_11-58-16.log
+2025-07-22 12:03:41 | INFO | __main__ | Preloaded MARPOL & SOLAS 2020 into FAISS index with 305 chunks.

@@ -190,13 +190,29 @@
 <h2>PDF Summary</h2>
 <p>{{ summary }}</p>
 
+<!-- Q&A Section -->
 <h2>Q&A Section</h2>
 {% for qa in qa_pairs %}
   <div class="qa">
     <p><strong>Q:</strong> {{ qa.q }}</p>
     <p><strong>A:</strong> {{ qa.a }}</p>
+
+    {% if qa.sources %}
+      <p><strong>Sources:</strong>
+        {% if qa.sources is string %}
+          {{ qa.sources }}
+        {% else %}
+          {{ qa.sources | join(', ') }}
+        {% endif %}
+      </p>
+    {% endif %}
+
+    {% if qa.timestamp %}
+      <p><strong>Timestamp:</strong> {{ qa.timestamp }}</p>
+    {% endif %}
   </div>
 {% endfor %}
+
 
 </body>
 </html>
