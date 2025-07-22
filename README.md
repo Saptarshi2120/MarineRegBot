@@ -1,37 +1,31 @@
-<<<<<<< HEAD
-# PDF-ChatBot
+# ⚓ MarineRegBot – MARPOL & SOLAS Compliance Chatbot
 
-## Overview
+[![Streamlit](https://img.shields.io/badge/Framework-Streamlit-red?style=flat-square&logo=streamlit)](https://streamlit.io/)
+[![LangChain](https://img.shields.io/badge/Powered%20By-LangChain-green?style=flat-square)](https://www.langchain.com/)
+[![Google Gemini](https://img.shields.io/badge/LLM-Google%20Gemini-blue?style=flat-square)](https://ai.google.dev/gemini-api)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-PDF-ChatBot is a powerful web application built using Streamlit that allows users to interact with multiple PDF files using natural language queries. Leveraging the capabilities of Google Generative AI and FAISS for vector-based search, this bot provides accurate responses from the content of uploaded PDFs.
+---
 
-The chatbot uses state-of-the-art machine learning models like Gemini and FAISS to process and retrieve relevant sections from large PDFs, making it an efficient tool for document analysis, research, and information extraction.
+## 📖 **Overview**
 
-## Features
+**MarineRegBot** is an AI-powered regulatory compliance assistant for the **marine industry**.  
+It uses **Google Gemini** and **LangChain** to answer **compliance-related questions** from **MARPOL** and **SOLAS** regulations.
 
-- **Multiple PDF Support**: Upload and process multiple PDFs simultaneously.
-- **Natural Language Interaction**: Ask questions in natural language and receive detailed answers from the PDF content.
-- **Vector Search**: FAISS-based search to find relevant answers efficiently.
-- **Google Generative AI Integration**: Uses the Gemini model to generate responses based on the extracted content.
-- **Fast Processing**: Capable of handling large documents and returning results quickly.
+### ✅ **Key Highlights**
+- Preloaded **MARPOL** & **SOLAS 2020** regulations.
+- **Custom PDF Q&A** – Upload your own documents.
+- **Two Separate Pipelines**:
+  1. **Marine Compliance Database** (Central regulatory database).
+  2. **Custom PDF Q&A** (On-demand document queries).
+- Multiple Q&A Modes:
+  - **✅ Compliance Checker (Yes/No)**  
+  - **⚠️ Violation Penalty Explanation**  
+  - **📘 Scenario Training for Crew**  
+  - **🌐 Multilingual (English, Simple English, Hindi)**
 
-## How It Works
-
-1. **Upload PDFs**: Upload one or more PDF files through the interface.
-2. **PDF Parsing**: The PDFs are parsed, and text is extracted using `PyPDF2`.
-3. **Text Chunking**: The extracted text is split into manageable chunks using Langchain's `RecursiveCharacterTextSplitter`.
-4. **Vectorization**: Text chunks are converted into vector representations using Google's Generative AI Embeddings.
-5. **Vector Store Creation**: A FAISS index is created from these vectors for fast similarity search.
-6. **Ask Questions**: Users can input questions through the interface, and the chatbot will search the PDFs and respond with relevant information.
-7. **Response Generation**: Based on the search results, the chatbot generates detailed answers using the Gemini model.
-
-## Tech Stack
-
-- **Streamlit**: Frontend interface for the PDF-ChatBot.
-- **Langchain**: Used for chaining models and creating vector-based document retrieval.
-- **Google Generative AI**: Handles embeddings and conversational model responses.
-- **FAISS**: Efficient similarity search across large text datasets.
-- **PyPDF2**: For PDF parsing and text extraction.
+---
 
 ## Getting Started
 
@@ -55,7 +49,7 @@ The chatbot uses state-of-the-art machine learning models like Gemini and FAISS 
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/NitinYadav1511/PDF-ChatBot.git
+    git clone https://github.com/Saptarshi2120/MarineRegBot.git
     ```
 
 2. Navigate to the project directory:
@@ -78,28 +72,41 @@ The chatbot uses state-of-the-art machine learning models like Gemini and FAISS 
 
 5. Upload PDFs through the sidebar and start asking questions!
 
-## Usage
 
-- **Upload PDFs**: Click on "Upload your PDF Files" in the sidebar to upload multiple PDF documents.
-- **Ask Questions**: Enter your question in the text input field, and the bot will search the PDFs and respond with relevant answers.
+## 🚀 **Features**
 
-## Future Enhancements
+### ✅ **1. Marine Compliance Q&A (Preloaded MARPOL & SOLAS PDFs)**
+- Ask compliance-related questions directly.
+- Get answers with **rule references** (e.g., "MARPOL Annex I Reg 14").
+- Automatic **Yes/No compliance checker**.
 
-- Add support for summarizing entire PDFs.
-- Improve the conversational flow and context retention across multiple questions.
-- Implement a feedback mechanism to refine answer quality.
+### ✅ **2. Custom PDF Q&A**
+- Upload multiple PDFs (e.g., Port Operations, Company Manuals).
+- Generate FAISS vector indexes for semantic search.
+- Optionally **merge into the Marine Compliance Database**.
 
-## Contributor
+### ✅ **3. Crew Training Assistant**
+- Scenario-based Q&A for emergency drills.
+- Step-by-step answers for onboard training.
 
-This repository is maintained by [Nitin Yadav](https://github.com/NitinYadav1511).
+### ✅ **4. Multilingual Support**
+- English, **Simple English** (for non-technical crew), **Hindi**.
 
-## Contributing
+### ✅ **5. Logging & Monitoring**
+- All Q&A logged in **MongoDB**.
+- View real-time logs in the Streamlit sidebar.
 
-Contributions are welcome! Feel free to open an issue or submit a pull request.
+---
 
-## License
+## 🏗 **Tech Stack**
 
-This project is licensed under the MIT License.
-=======
-# RAG
->>>>>>> 84547b487471857f5ed40560bc3757ce0da44775
+| Component           | Technology Used |
+|----------------------|-----------------|
+| **Frontend**        | Streamlit |
+| **Backend (RAG)**   | LangChain + Google Gemini (Gemini 1.5 Flash) |
+| **Vector DB**       | FAISS |
+| **Database**        | MongoDB |
+| **PDF Parsing**     | PyPDF2 |
+| **Deployment Ready**| Streamlit Cloud / Hugging Face Spaces |
+
+---
