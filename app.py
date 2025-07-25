@@ -72,17 +72,30 @@ def clean_old_logs(max_files=10):
 clean_old_logs()
 
 # ========== Password Protection ==========
+app_password = "1234"
+
 if "auth_ok" not in st.session_state:
     st.session_state.auth_ok = False
 
+def try_login():
+    if st.session_state.entered_pw == app_password:
+        st.session_state.auth_ok = True
+    else:
+        st.session_state.auth_ok = False
+        st.error("Incorrect password")
+
 if not st.session_state.auth_ok:
     st.sidebar.title("🔒 Login")
-    entered_pw = st.sidebar.text_input("Enter Password:", type="password")
-    if st.sidebar.button("Unlock"):
-        if entered_pw == app_password:
-            st.session_state.auth_ok = True
-        else:
-            st.error("Incorrect password")
+    
+    st.sidebar.text_input(
+        "Enter Password:",
+        key="entered_pw",
+        value=app_password,        # show 1234 by default
+        on_change=try_login        # called on Enter
+    )
+    
+    st.sidebar.button("Unlock", on_click=try_login)  # also allows manual click
+    
     st.stop()
 
 # ========== Marine PDFs Preloading ==========
@@ -331,11 +344,13 @@ def main():
             marine_pdfs = ", ".join(PRELOAD_PDFS + [f for f in os.listdir(MARINE_INDEX_DIR)])
             st.info(f"**Currently Loaded Marine PDFs:** {marine_pdfs}")
 
-            user_question = st.text_input("Ask your compliance question:")
-            language = st.selectbox("🌐 Language", ["English", "Simple English", "Hindi"])
-            compliance_mode = st.checkbox("✅ Compliance Checker (Yes/No)")
-            scenario_mode = st.checkbox("📘 Scenario Training Mode")
-            penalty_mode = st.checkbox("⚠️ Penalty Explanation Mode")
+            with st.form("marine_qa_form", clear_on_submit=False):
+                user_question = st.text_input("Ask your compliance question:")
+                language = st.selectbox("🌐 Language", ["English", "Simple English", "Hindi"])
+                compliance_mode = st.checkbox("✅ Compliance Checker (Yes/No)")
+                scenario_mode = st.checkbox("📘 Scenario Training Mode")
+                penalty_mode = st.checkbox("⚠️ Penalty Explanation Mode")
+                submitted = st.form_submit_button("Get Answer", use_container_width=True)
 
             mode = "professional"
             if compliance_mode:
@@ -347,7 +362,7 @@ def main():
             elif language != "English":
                 mode = "simple"
 
-            if st.button("Get Answer", key="marine_answer"):
+            if submitted:
                 if user_question:
                     question_answer(user_question, MARINE_INDEX_DIR, mode, language)
                 else:
@@ -375,11 +390,14 @@ def main():
 
             if available_indexes:
                 selected_pdf = st.selectbox("Choose Custom PDF to ask from:", available_indexes)
-                user_question_custom = st.text_input("Ask your question:")
-                language_custom = st.selectbox("🌐 Language (Custom PDFs)", ["English", "Simple English", "Hindi"])
-                compliance_mode_custom = st.checkbox("✅ Compliance Checker (Yes/No) - Custom")
-                scenario_mode_custom = st.checkbox("📘 Scenario Training - Custom")
-                penalty_mode_custom = st.checkbox("⚠️ Penalty Mode - Custom")
+
+                with st.form("custom_qa_form", clear_on_submit=False):
+                    user_question_custom = st.text_input("Ask your question:")
+                    language_custom = st.selectbox("🌐 Language (Custom PDFs)", ["English", "Simple English", "Hindi"])
+                    compliance_mode_custom = st.checkbox("✅ Compliance Checker (Yes/No) - Custom")
+                    scenario_mode_custom = st.checkbox("📘 Scenario Training - Custom")
+                    penalty_mode_custom = st.checkbox("⚠️ Penalty Mode - Custom")
+                    submitted_custom = st.form_submit_button("Get Answer", use_container_width=True)
 
                 mode_custom = "professional"
                 if compliance_mode_custom:
@@ -391,9 +409,12 @@ def main():
                 elif language_custom != "English":
                     mode_custom = "simple"
 
-                if st.button("Get Answer", key="custom_answer"):
-                    index_path = os.path.join(INDEX_DIR, selected_pdf + "_index")
-                    question_answer(user_question_custom, index_path, mode_custom, language_custom)
+                if submitted_custom:
+                    if selected_pdf and user_question_custom:
+                        index_path = os.path.join(INDEX_DIR, selected_pdf + "_index")
+                        question_answer(user_question_custom, index_path, mode_custom, language_custom)
+                    else:
+                        st.warning("Please enter a question and select a PDF.")
 
             if st.button("🧹 Delete All Custom FAISS Indexes"):
                 shutil.rmtree(INDEX_DIR)
@@ -419,6 +440,7 @@ def main():
         st.error("🚨 Critical error occurred. Check logs.")
         raise CustomException(e, sys)
 
+# Run app
 if __name__ == "__main__":
     try:
         main()
